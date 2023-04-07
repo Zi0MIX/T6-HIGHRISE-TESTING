@@ -1,0 +1,1 @@
+C:\Users\Zi0\Downloads\gsc-tool.exe comp t6 "C:\Users\Zi0\GitHub\T6-HIGHRISE-TESTING\dierise_test.gsc"
