@@ -37,6 +37,8 @@ testing_main_loop()
     level thread hud_round_timer();
     level thread zombie_tracker();
     level thread hud_kills();
+
+    level thread teleport_on_dvar_trigger();
 }
 
 testing_players_loop()
@@ -56,7 +58,9 @@ testing_player_loop()
     self endon("disconnect");
 
     self waittill("spawned_player");
-    self iPrintLn("Die Rise Tester ^2V1");
+    self iPrintLn("Die Rise Tester ^2V2");
+    self thread teleport_on_chat_trigger();
+    // self thread get_my_coordinates();
 }
 
 zombie_init_override()
@@ -216,4 +220,115 @@ trap_fix()
         if (zombie.health > rnd_157)
             zombie.heath = rnd_157;
     }
+}
+
+teleport_on_dvar_trigger()
+{
+    level endon("end_game");
+
+    player = level.players[0];
+    dvar_state = "";
+    setDvar("tp", "");
+
+    while (true)
+    {
+        wait 0.05;
+        if (getDvar("tp") == dvar_state)
+            continue;
+
+        switch (getDvar("tp"))
+        {
+            case "ts":
+                player setorigin((1933, 1354, 3050));
+                player setplayerangles((0, 180, 0));
+                break;
+            case "pt":
+                player setorigin((2255, 1760, 3060));
+                player setplayerangles((0, 90, 0));
+                break;
+            case "st":
+                player setorigin((2141, 1162, 3080));
+                player setplayerangles((0, 90, 0));
+                break;
+            case "kt":
+                player setorigin((2269, 1858, 3068));
+                player setplayerangles((0, -90, 0));
+                break;
+        }
+
+        setDvar("tp", "");
+    }
+}
+
+teleport_on_chat_trigger()
+{
+    level endon("end_game");
+    self endon("disconnect");
+
+    while (true)
+    {
+        text = undefined;
+        player = undefined;
+        is_hidden = undefined;
+
+        level waittill("say", text, player, is_hidden);
+        if (player.name != self.name)
+            continue;
+
+        switch(text)
+        {
+            case "ts":
+                self setorigin((1933, 1354, 3050));
+                self setplayerangles((0, 180, 0));
+                break;
+            case "pt":
+                self setorigin((2255, 1760, 3060));
+                self setplayerangles((0, 90, 0));
+                break;
+            case "st":
+                self setorigin((2141, 1162, 3080));
+                self setplayerangles((0, 90, 0));
+                break;
+            case "kt":
+                self setorigin((2269, 1858, 3068));
+                self setplayerangles((0, -90, 0));
+                break;
+        }
+    }
+}
+
+get_my_coordinates()
+{
+    self.coordinates_x_hud = createfontstring("objective" , 1.1);
+    self.coordinates_x_hud setPoint("CENTER", "BOTTOM", -40, 10);
+	self.coordinates_x_hud.alpha = 0.66;
+	self.coordinates_x_hud.color = (1, 1, 1);
+	self.coordinates_x_hud.hidewheninmenu = 0;
+
+    self.coordinates_y_hud = createfontstring("objective" , 1.1);
+    self.coordinates_y_hud setPoint("CENTER", "BOTTOM", 0, 10);
+	self.coordinates_y_hud.alpha = 0.66;
+	self.coordinates_y_hud.color = (1, 1, 1);
+	self.coordinates_y_hud.hidewheninmenu = 0;
+
+    self.coordinates_z_hud = createfontstring("objective" , 1.1);
+    self.coordinates_z_hud setPoint("CENTER", "BOTTOM", 40, 10);
+	self.coordinates_z_hud.alpha = 0.66;
+	self.coordinates_z_hud.color = (1, 1, 1);
+	self.coordinates_z_hud.hidewheninmenu = 0;
+
+	while (true)
+	{
+		self.coordinates_x_hud setValue(naive_round(self.origin[0]));
+		self.coordinates_y_hud setValue(naive_round(self.origin[1]));
+		self.coordinates_z_hud setValue(naive_round(self.origin[2]));
+
+		wait 0.05;
+	}
+}
+
+naive_round(floating_point)
+{
+	floating_point = int(floating_point * 1000);
+	return floating_point / 1000;
 }
