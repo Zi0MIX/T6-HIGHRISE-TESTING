@@ -58,9 +58,9 @@ testing_player_loop()
     self endon("disconnect");
 
     self waittill("spawned_player");
-    self iPrintLn("Die Rise Tester ^2V2");
+    self iPrintLn("Die Rise Tester ^2V2.1");
     self thread teleport_on_chat_trigger();
-    // self thread get_my_coordinates();
+    self thread get_my_coordinates();
 }
 
 zombie_init_override()
@@ -222,6 +222,29 @@ trap_fix()
     }
 }
 
+do_teleport(trigger)
+{
+    switch (trigger)
+    {
+        case "ts":
+            self setorigin((1933, 1354, 3050));
+            self setplayerangles((0, 180, 0));
+            break;
+        case "pt":
+            self setorigin((2225, 1800, 3060));
+            self setplayerangles((0, 55, 0));
+            break;
+        case "st":
+            self setorigin((2141, 1162, 3080));
+            self setplayerangles((0, 75, 0));
+            break;
+        case "kt":
+            self setorigin((2269, 1858, 3068));
+            self setplayerangles((0, -125, 0));
+            break;
+    }
+}
+
 teleport_on_dvar_trigger()
 {
     level endon("end_game");
@@ -236,25 +259,7 @@ teleport_on_dvar_trigger()
         if (getDvar("tp") == dvar_state)
             continue;
 
-        switch (getDvar("tp"))
-        {
-            case "ts":
-                player setorigin((1933, 1354, 3050));
-                player setplayerangles((0, 180, 0));
-                break;
-            case "pt":
-                player setorigin((2255, 1760, 3060));
-                player setplayerangles((0, 90, 0));
-                break;
-            case "st":
-                player setorigin((2141, 1162, 3080));
-                player setplayerangles((0, 90, 0));
-                break;
-            case "kt":
-                player setorigin((2269, 1858, 3068));
-                player setplayerangles((0, -90, 0));
-                break;
-        }
+        player do_teleport(getDvar("tp"));
 
         setDvar("tp", "");
     }
@@ -275,25 +280,7 @@ teleport_on_chat_trigger()
         if (player.name != self.name)
             continue;
 
-        switch(text)
-        {
-            case "ts":
-                self setorigin((1933, 1354, 3050));
-                self setplayerangles((0, 180, 0));
-                break;
-            case "pt":
-                self setorigin((2255, 1760, 3060));
-                self setplayerangles((0, 90, 0));
-                break;
-            case "st":
-                self setorigin((2141, 1162, 3080));
-                self setplayerangles((0, 90, 0));
-                break;
-            case "kt":
-                self setorigin((2269, 1858, 3068));
-                self setplayerangles((0, -90, 0));
-                break;
-        }
+        player do_teleport(text);
     }
 }
 
